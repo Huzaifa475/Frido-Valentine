@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Frido — Valentine's Day</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#C8102E;--red-light:#ff4d6d;--red-dark:#8B0D20;
+  --gold:#D4AF37;--cream:#FFF8F0;
+  --dark:#0A0A0A;--dark2:#111111;--dark3:#1a1a1a;
+  --font-head:'Playfair Display',serif;
+  --font-body:'DM Sans',sans-serif;
+  --trans:0.55s cubic-bezier(0.77,0,0.175,1);
+}
+body{font-family:var(--font-body);overflow-x:hidden;background:#fff}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #eee;padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{font-family:var(--font-head);font-size:1.6rem;font-weight:700;letter-spacing:-1px;color:#111}
+.nav-actions{display:flex;align-items:center;gap:18px}
+.nav-icon{background:none;border:none;cursor:pointer;font-size:1.1rem;color:#333;padding:4px}
+.cart-btn{position:relative}
+.cart-count{position:absolute;top:-6px;right:-8px;background:var(--red);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* HERO */
+.hero{position:relative;height:540px;overflow:hidden;background:#111}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;transition:opacity 0.6s ease}
+.hero-overlay{position:absolute;inset:0;z-index:1;transition:background var(--trans)}
+.overlay-couple{background:linear-gradient(120deg,rgba(139,13,32,0.6) 0%,rgba(200,16,46,0.25) 60%,transparent 100%)}
+.overlay-single{background:linear-gradient(120deg,rgba(0,0,0,0.85) 0%,rgba(10,10,10,0.5) 60%,transparent 100%)}
+.hero-content{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;padding:0 6%;max-width:600px;transition:opacity 0.35s ease,transform 0.35s ease}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;padding:6px 16px;border-radius:100px;color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);width:fit-content}
+.hero-title{font-family:var(--font-head);line-height:1.05;margin-bottom:18px;color:#fff}
+.hero-title.couple-title{font-size:clamp(2.2rem,5vw,3.6rem);font-style:italic;font-weight:700}
+.hero-title.single-title{font-size:clamp(1.9rem,4.5vw,3.1rem);font-style:normal;font-weight:700;letter-spacing:-2px;text-transform:uppercase}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,0.8);margin-bottom:28px}
+.hero-sub strong{color:#fff;font-weight:700}
+.hero-cta{display:inline-block;padding:14px 30px;border-radius:100px;font-weight:600;font-size:0.9rem;cursor:pointer;border:none;transition:all 0.25s;letter-spacing:0.3px;width:fit-content}
+.hero-cta.couple-cta{background:var(--gold);color:#fff}
+.hero-cta.couple-cta:hover{background:#c9a227;transform:translateY(-2px)}
+.hero-cta.single-cta{background:#fff;color:#000}
+.hero-cta.single-cta:hover{background:#e8e8e8;transform:translateY(-2px)}
+
+/* MODE TOGGLE */
+.mode-toggle-wrap{position:absolute;top:18px;right:18px;z-index:10}
+.mode-toggle{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);border-radius:100px;padding:7px 16px 7px 7px;cursor:pointer;font-family:var(--font-body);font-size:12px;font-weight:600;color:#fff;letter-spacing:0.5px;white-space:nowrap;transition:background 0.3s}
+.mode-toggle:hover{background:rgba(0,0,0,0.5)}
+.toggle-pill{width:34px;height:20px;background:rgba(255,255,255,0.25);border-radius:100px;position:relative;flex-shrink:0}
+.toggle-dot{position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+.toggled .toggle-dot{transform:translateX(14px)}
+
+/* PAGE BODY */
+.page-body{transition:background 0.5s ease}
+.page-body.couple-mode{background:#fff}
+.page-body.single-mode{background:var(--dark)}
+
+/* SECTIONS */
+.section{padding:52px 5%}
+.section-eyebrow{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px}
+.couple-mode .section-eyebrow{color:var(--red)}
+.single-mode .section-eyebrow{color:var(--gold)}
+.section-title{font-family:var(--font-head);font-size:clamp(1.5rem,2.8vw,2rem);margin-bottom:34px}
+.couple-mode .section-title{color:#1a1a1a;font-style:italic}
+.single-mode .section-title{color:#fff;font-style:normal;letter-spacing:-0.5px}
+
+/* CATEGORY TABS */
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;padding:14px 20px;border-radius:18px;border:1.5px solid transparent;transition:all 0.22s;min-width:88px}
+.tab-icon{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:all 0.22s;flex-shrink:0}
+.tab-label{font-size:12px;font-weight:600;letter-spacing:0.3px;transition:color 0.22s}
+/* couple tab states */
+.couple-mode .tab{background:#fff5f7;border-color:transparent}
+.couple-mode .tab:hover{border-color:rgba(200,16,46,0.3);background:#fff}
+.couple-mode .tab.active{background:#fff;border-color:var(--red);box-shadow:0 4px 18px rgba(200,16,46,0.12)}
+.couple-mode .tab-icon{background:#fce8ec}
+.couple-mode .tab.active .tab-icon{background:var(--red)}
+.couple-mode .tab-label{color:#999}
+.couple-mode .tab.active .tab-label{color:var(--red);font-weight:700}
+/* single tab states */
+.single-mode .tab{background:#181818;border-color:transparent}
+.single-mode .tab:hover{border-color:rgba(212,175,55,0.3);background:#1e1e1e}
+.single-mode .tab.active{background:#1e1e1e;border-color:var(--gold)}
+.single-mode .tab-icon{background:#222;color:#555}
+.single-mode .tab.active .tab-icon{background:var(--gold)}
+.single-mode .tab-label{color:#555}
+.single-mode .tab.active .tab-label{color:var(--gold);font-weight:700}
+
+/* PRODUCT GRID */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:20px}
+.product-card{border-radius:22px;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;position:relative;cursor:pointer}
+.couple-mode .product-card{background:#fff;box-shadow:0 2px 14px rgba(0,0,0,0.06);border:1px solid #f0f0f0}
+.couple-mode .product-card:hover{box-shadow:0 10px 36px rgba(200,16,46,0.14);transform:translateY(-5px)}
+.single-mode .product-card{background:#181818;border:1px solid #2a2a2a}
+.single-mode .product-card:hover{border-color:var(--gold);transform:translateY(-5px)}
+.product-img-wrap{aspect-ratio:1;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.couple-mode .product-img-wrap{background:#f8f8f8}
+.single-mode .product-img-wrap{background:#111}
+.product-img{width:100%;height:100%;object-fit:cover;transition:transform 0.45s}
+.product-card:hover .product-img{transform:scale(1.06)}
+.no-img{font-size:4rem;line-height:1}
+.product-badge{position:absolute;top:12px;left:12px;padding:5px 12px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.5px;z-index:1}
+.couple-mode .product-badge{background:var(--red);color:#fff}
+.single-mode .product-badge{background:var(--gold);color:#000}
+.product-info{padding:16px}
+.product-rating{display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.stars{color:#F5A623;font-size:11px;letter-spacing:0.5px}
+.rating-count{font-size:11px;color:#bbb}
+.product-name{font-weight:600;font-size:0.88rem;line-height:1.35;margin-bottom:4px}
+.couple-mode .product-name{color:#111}
+.single-mode .product-name{color:#eee}
+.product-desc{font-size:0.74rem;color:#aaa;margin-bottom:10px}
+.product-pricing{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.price-orig{font-size:0.78rem;text-decoration:line-through;color:#bbb}
+.price-sale{font-size:1.05rem;font-weight:700}
+.couple-mode .price-sale{color:var(--red)}
+.single-mode .price-sale{color:var(--gold)}
+.price-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px}
+.couple-mode .price-badge{background:#fce8ec;color:var(--red)}
+.single-mode .price-badge{background:rgba(212,175,55,0.15);color:var(--gold)}
+.atc-btn{width:100%;padding:12px;border-radius:100px;border:none;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px}
+.couple-mode .atc-btn{background:var(--red);color:#fff}
+.couple-mode .atc-btn:hover{background:var(--red-dark)}
+.single-mode .atc-btn{background:var(--gold);color:#000}
+.single-mode .atc-btn:hover{background:#c9a227}
+.atc-btn:active{transform:scale(0.97)}
+
+/* SKELETON */
+.skeleton{border-radius:22px;overflow:hidden;animation:shimmer 1.5s ease infinite}
+@keyframes shimmer{0%,100%{opacity:1}50%{opacity:0.45}}
+.couple-mode .skeleton{background:#f5f5f5}
+.single-mode .skeleton{background:#1a1a1a}
+.skel-img{aspect-ratio:1}
+.couple-mode .skel-img{background:#ebebeb}
+.single-mode .skel-img{background:#222}
+.skel-body{padding:16px;display:flex;flex-direction:column;gap:9px}
+.skel-line{height:11px;border-radius:6px}
+.couple-mode .skel-line{background:#ebebeb}
+.single-mode .skel-line{background:#222}
+
+/* PROMO BAND */
+.promo-band{margin:0 5% 52px;border-radius:28px;padding:44px 48px;display:flex;align-items:center;gap:32px;position:relative;overflow:hidden}
+.couple-mode .promo-band{background:linear-gradient(130deg,#8B0D20 0%,#C8102E 100%)}
+.single-mode .promo-band{background:#161616;border:1px solid #2a2a2a}
+.promo-text{flex:1;z-index:1;position:relative}
+.promo-heading{font-family:var(--font-head);font-size:clamp(1.4rem,2.8vw,2rem);color:#fff;margin-bottom:10px}
+.couple-mode .promo-heading{font-style:italic}
+.single-mode .promo-heading{font-style:normal;text-transform:uppercase;letter-spacing:-1px;font-size:clamp(1.2rem,2.5vw,1.8rem)}
+.promo-sub{color:rgba(255,255,255,0.7);font-size:0.9rem;margin-bottom:22px}
+.promo-btn{display:inline-block;padding:12px 26px;border-radius:100px;font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all 0.2s}
+.couple-mode .promo-btn{background:var(--gold);color:#fff}
+.single-mode .promo-btn{background:#fff;color:#000}
+.promo-btn:hover{transform:translateY(-2px);opacity:0.9}
+.promo-deco{font-size:6rem;opacity:0.15;position:absolute;right:6%;top:50%;transform:translateY(-50%);line-height:1;pointer-events:none}
+
+/* CART DRAWER */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:300;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.backdrop.open{opacity:1;pointer-events:all}
+.cart-drawer{position:fixed;top:0;right:0;width:min(420px,95vw);height:100dvh;background:#fff;z-index:301;transform:translateX(105%);transition:transform 0.42s cubic-bezier(0.77,0,0.175,1);display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,0.15)}
+.cart-drawer.open{transform:translateX(0)}
+.cart-hd{padding:20px 24px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.cart-hd-title{font-family:var(--font-head);font-size:1.3rem;font-style:italic;color:#111}
+.cart-hd-close{background:none;border:none;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#555;transition:background 0.2s}
+.cart-hd-close:hover{background:#f5f5f5}
+.cart-body{flex:1;overflow-y:auto;padding:12px 24px}
+.cart-empty{text-align:center;padding:64px 0;color:#bbb}
+.cart-empty-icon{font-size:3.5rem;margin-bottom:12px}
+.cart-empty p{font-size:0.9rem}
+.cart-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid #f5f5f5}
+.ci-img{width:66px;height:66px;border-radius:14px;background:#f5f5f5;object-fit:cover;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;overflow:hidden}
+.ci-img img{width:100%;height:100%;object-fit:cover}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-weight:600;font-size:0.88rem;color:#111;line-height:1.3;margin-bottom:4px}
+.ci-price{font-weight:700;font-size:0.95rem;color:var(--red);margin-bottom:8px}
+.ci-qty{display:flex;align-items:center;gap:10px}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid #e0e0e0;background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.18s;line-height:1}
+.qty-btn:hover{border-color:var(--red);color:var(--red)}
+.qty-num{font-size:0.9rem;font-weight:600;min-width:22px;text-align:center;color:#111}
+.ci-del{background:none;border:none;cursor:pointer;color:#ccc;font-size:1rem;padding:4px;margin-left:auto;align-self:flex-start;transition:color 0.2s;line-height:1;flex-shrink:0}
+.ci-del:hover{color:var(--red)}
+.cart-ft{padding:20px 24px;border-top:1px solid #f0f0f0}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.cart-total-label{font-size:0.9rem;color:#666}
+.cart-total-val{font-family:var(--font-head);font-size:1.5rem;font-weight:700;color:#111}
+.checkout-btn{width:100%;padding:15px;background:var(--red);color:#fff;border:none;border-radius:100px;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px}
+.checkout-btn:hover{background:var(--red-dark);transform:translateY(-1px)}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120px);background:#111;color:#fff;padding:13px 26px;border-radius:100px;font-size:0.88rem;font-weight:500;z-index:400;transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.toast.visible{transform:translateX(-50%) translateY(0)}
+
+/* ERROR */
+.api-error{grid-column:1/-1;text-align:center;padding:40px 20px;color:#bbb;font-size:0.9rem}
+.api-error strong{display:block;font-size:1rem;margin-bottom:8px;color:#888}
+
+@media(max-width:640px){
+  .section{padding:36px 4%}
+  .promo-band{padding:28px 24px;margin:0 4% 40px}
+  .hero{height:460px}
+  .product-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .tabs{gap:8px}
+  .tab{padding:10px 12px;min-width:72px}
+  .tab-icon{width:42px;height:42px;font-size:1.2rem}
+  nav{padding:0 4%}
+  .promo-deco{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">frido</div>
+  <div class="nav-actions">
+    <button class="nav-icon">&#9776;</button>
+    <button class="nav-icon">&#128269;</button>
+    <button class="nav-icon cart-btn" id="openCart">
+      &#128722;
+      <span class="cart-count" id="cartCount" style="display:none">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE WRAPPER -->
+<div id="pageBody" class="page-body couple-mode">
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <video id="vidCouple" class="hero-video" autoplay muted loop playsinline style="opacity:1">
+      <source src="https://cdn.shopify.com/videos/c/o/v/c102dc6ee2be49fc9935403b43e413bb.mp4" type="video/mp4"/>
+    </video>
+    <video id="vidSingle" class="hero-video" autoplay muted loop playsinline style="opacity:0;pointer-events:none">
+      <source src="https://cdn.shopify.com/videos/c/o/v/452bedba47694a96a7e5684c79a0eeb3.mp4" type="video/mp4"/>
+    </video>
+    <div class="hero-overlay overlay-couple" id="heroOverlay"></div>
+    <div class="hero-content" id="heroContent">
+      <div class="hero-tag" id="heroTag">&#10084;&#65039; Valentine's Special</div>
+      <h1 class="hero-title couple-title" id="heroTitle">This Valentine's<br/><em>Gift Comfort</em></h1>
+      <p class="hero-sub">&amp; get up to <strong>70% OFF</strong></p>
+      <button class="hero-cta couple-cta">Shop Now</button>
+    </div>
+    <div class="mode-toggle-wrap">
+      <button class="mode-toggle" id="modeToggle" onclick="toggleMode()">
+        <div class="toggle-pill"><div class="toggle-dot" id="toggleDot"></div></div>
+        <span id="toggleLabel">Single Mode</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== COUPLE SECTIONS ===== -->
+  <div id="coupleSections">
+    <section class="section couple-mode">
+      <div class="section-eyebrow">So... what kind of Paglu is yours?</div>
+      <div class="tabs" id="coupleTabs">
+        <div class="tab active" data-tab="sleep" onclick="selectCoupleTab(this,'sleep')">
+          <div class="tab-icon">&#128164;</div><div class="tab-label">Sleep Paglu</div>
+        </div>
+        <div class="tab" data-tab="travel" onclick="selectCoupleTab(this,'travel')">
+          <div class="tab-icon">&#9992;&#65039;</div><div class="tab-label">Travel Paglu</div>
+        </div>
+        <div class="tab" data-tab="wfh" onclick="selectCoupleTab(this,'wfh')">
+          <div class="tab-icon">&#128187;</div><div class="tab-label">WFH Paglu</div>
+        </div>
+        <div class="tab" data-tab="gym" onclick="selectCoupleTab(this,'gym')">
+          <div class="tab-icon">&#127947;</div><div class="tab-label">GYM Paglu</div>
+        </div>
+      </div>
+      <div class="product-grid couple-mode" id="coupleGrid"></div>
+    </section>
+
+    <div class="promo-band couple-mode" style="display:flex">
+      <div class="promo-text">
+        <h2 class="promo-heading">Match Made in Comfort</h2>
+        <p class="promo-sub">Get matching Frido insoles — because comfort is better together.</p>
+        <button class="promo-btn">Shop Couple Sets</button>
+      </div>
+      <div class="promo-deco">&#10084;&#65039;</div>
+    </div>
+  </div>
+
+  <!-- ===== SINGLE SECTIONS ===== -->
+  <div id="singleSections" style="display:none">
+    <section class="section single-mode">
+      <div class="section-eyebrow">Pick where you need pampering</div>
+      <div class="tabs" id="singleTabs">
+        <div class="tab active" data-tab="sleep" onclick="selectSingleTab(this,'sleep')">
+          <div class="tab-icon">&#128164;</div><div class="tab-label">Sleep</div>
+        </div>
+        <div class="tab" data-tab="travel" onclick="selectSingleTab(this,'travel')">
+          <div class="tab-icon">&#9992;&#65039;</div><div class="tab-label">Travel</div>
+        </div>
+        <div class="tab" data-tab="wfh" onclick="selectSingleTab(this,'wfh')">
+          <div class="tab-icon">&#128187;</div><div class="tab-label">WFH</div>
+        </div>
+        <div class="tab" data-tab="gym" onclick="selectSingleTab(this,'gym')">
+          <div class="tab-icon">&#127947;</div><div class="tab-label">GYM</div>
+        </div>
+      </div>
+      <div class="product-grid single-mode" id="singleGrid1"></div>
+    </section>
+
+    <div class="promo-band single-mode" style="display:flex">
+      <div class="promo-text">
+        <h2 class="promo-heading">Or... Pamper Who Matters To You</h2>
+        <p class="promo-sub">Gift comfort to the people you love most this Valentine's.</p>
+        <button class="promo-btn">Shop Gifts</button>
+      </div>
+      <div class="promo-deco">&#127873;</div>
+    </div>
+
+    <section class="section single-mode">
+      <div class="tabs" id="giftTabs">
+        <div class="tab active" data-tab="mom" onclick="selectGiftTab(this,'mom')">
+          <div class="tab-icon">&#128105;</div><div class="tab-label">Mom</div>
+        </div>
+        <div class="tab" data-tab="dad" onclick="selectGiftTab(this,'dad')">
+          <div class="tab-icon">&#128104;</div><div class="tab-label">Dad</div>
+        </div>
+        <div class="tab" data-tab="bff" onclick="selectGiftTab(this,'bff')">
+          <div class="tab-icon">&#128147;</div><div class="tab-label">BFF's</div>
+        </div>
+        <div class="tab" data-tab="kids" onclick="selectGiftTab(this,'kids')">
+          <div class="tab-icon">&#128118;</div><div class="tab-label">Kids</div>
+        </div>
+      </div>
+      <div class="product-grid single-mode" id="singleGrid2"></div>
+    </section>
+  </div>
+
+</div><!-- /pageBody -->
+
+<!-- CART BACKDROP + DRAWER -->
+<div class="backdrop" id="backdrop" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-hd">
+    <span class="cart-hd-title">Your Cart</span>
+    <button class="cart-hd-close" onclick="closeCart()">&#10005;</button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-ft">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-val" id="cartTotal">&#8377;0</span>
+    </div>
+    <button class="checkout-btn">Proceed to Checkout</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const SHOP_DOMAIN = 'cmshk0-4q.myshopify.com';
+const STOREFRONT_TOKEN = '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';
+const GQL_URL = `https://${SHOP_DOMAIN}/api/2024-01/graphql.json`;
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let mode = 'couple';         // 'couple' | 'single'
+let coupleTag = 'sleep';
+let singleTag  = 'sleep';
+let giftTag    = 'mom';
+let cart = [];
+let busy = false;
+
+// ─── MOCK PRODUCTS (shown when API returns empty / before API responds) ───────
+const MOCK_PRODUCTS = [
+  {id:'m1',title:'Frido Orthopedic Heel Pad Pro Insole',desc:'Relief from Heel Pain',sale:299,orig:699,img:''},
+  {id:'m2',title:'Frido Memory Foam Comfort Insole',desc:'All-day cushioning support',sale:349,orig:799,img:''},
+  {id:'m3',title:'Frido Arch Support Insole',desc:'Flat feet & plantar fasciitis',sale:399,orig:899,img:''},
+  {id:'m4',title:'Frido Travel Comfort Insole',desc:'Long-haul walking relief',sale:299,orig:699,img:''},
+];
+
+// ─── SHOPIFY GRAPHQL FETCH ────────────────────────────────────────────────────
+async function shopifyFetch(tag) {
+  console.log(`[Frido] Fetching tag: "${tag}" from ${GQL_URL}`);
+  const query = `{
+    products(first: 8, query: "tag:${tag}") {
+      edges {
+        node {
+          id
+          title
+          description
+          priceRange { minVariantPrice { amount currencyCode } }
+          compareAtPriceRange { minVariantPrice { amount } }
+          images(first: 1) { edges { node { url altText } } }
+          variants(first: 1) { edges { node { id } } }
+        }
+      }
+    }
+  }`;
+  const res = await fetch(GQL_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Storefront-Access-Token': STOREFRONT_TOKEN,
+    },
+    body: JSON.stringify({ query }),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const json = await res.json();
+  if (json.errors) throw new Error(json.errors[0].message);
+    console.log(`[Frido] API response for "${tag}":`, json.data.products.edges);
+  return json.data.products.edges.map(e => {
+    const n = e.node;
+    return {
+      id: n.id,
+      title: n.title,
+      desc: n.description || 'Relief from Heel Pain',
+      sale: parseFloat(n.priceRange.minVariantPrice.amount),
+      orig: parseFloat(n.compareAtPriceRange?.minVariantPrice?.amount || 0),
+      img: n.images.edges[0]?.node?.url || '',
+      variantId: n.variants.edges[0]?.node?.id || n.id,
+    };
+  });
+}
+
+// ─── RENDER HELPERS ───────────────────────────────────────────────────────────
+function discount(orig, sale) {
+  return (orig > sale && orig > 0) ? Math.round((1 - sale/orig) * 100) : null;
+}
+
+function productCard(p, theme) {
+  const d = discount(p.orig, p.sale);
+  const label = theme === 'couple' ? "Valentine's" : 'Pamper';
+  const vid = p.variantId || p.id;
+  const imgHtml = p.img
+    ? `<img class="product-img" src="${p.img}" alt="${p.title}" loading="lazy"
+          onerror="this.style.display='none';this.parentElement.querySelector('.no-img').style.display='flex'"/>
+       <div class="no-img" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:4rem">&#128474;</div>`
+    : `<div class="no-img" style="display:flex;position:absolute;inset:0;align-items:center;justify-content:center;font-size:4rem">&#128474;</div>`;
+  return `
+<div class="product-card">
+  <div class="product-img-wrap" style="position:relative">
+    ${imgHtml}
+    ${d ? `<div class="product-badge">${label} ${d}% OFF</div>` : ''}
+  </div>
+  <div class="product-info">
+    <div class="product-rating">
+      <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+      <span class="rating-count">(786+)</span>
+    </div>
+    <div class="product-name">${p.title}</div>
+    <div class="product-desc">${p.desc.slice(0,60)}</div>
+    <div class="product-pricing">
+      ${p.orig > p.sale ? `<span class="price-orig">&#8377;${Math.round(p.orig)}</span>` : ''}
+      <span class="price-sale">&#8377;${Math.round(p.sale)}</span>
+      ${d ? `<span class="price-badge">${d}% OFF</span>` : ''}
+    </div>
+    <button class="atc-btn" onclick="addToCart('${vid}','${p.title.replace(/'/g,"\\'").replace(/"/g,'&quot;')}',${p.sale},'${p.img}')">Add To Cart</button>
+  </div>
+</div>`;
+}
+
+function skeletons(theme) {
+  return Array.from({length:4}, () => `
+<div class="skeleton ${theme}-mode">
+  <div class="skel-img ${theme}-mode"></div>
+  <div class="skel-body">
+    <div class="skel-line ${theme}-mode" style="width:35%"></div>
+    <div class="skel-line ${theme}-mode" style="width:85%"></div>
+    <div class="skel-line ${theme}-mode" style="width:60%"></div>
+    <div class="skel-line ${theme}-mode" style="width:100%;height:36px;border-radius:18px;margin-top:4px"></div>
+  </div>
+</div>`).join('');
+}
+
+async function loadGrid(gridId, tag, theme) {
+  const el = document.getElementById(gridId);
+  if (!el) return;
+  el.innerHTML = skeletons(theme);
+  try {
+    let products = await shopifyFetch(tag);
+    if (!products.length) {
+      // Use mock data if store has no tagged products yet
+      products = MOCK_PRODUCTS.map(p => ({...p, variantId: p.id}));
+    }
+    el.innerHTML = products.map(p => productCard(p, theme)).join('');
+  } catch(err) {
+    console.warn('[Frido] API error, falling back to mock:', err.message);
+    const products = MOCK_PRODUCTS.map(p => ({...p, variantId: p.id}));
+    el.innerHTML = products.map(p => productCard(p, theme)).join('');
+  }
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function activateTab(group, el) {
+  document.querySelectorAll(`#${group} .tab`).forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectCoupleTab(el, tag) {
+  coupleTag = tag;
+  activateTab('coupleTabs', el);
+  loadGrid('coupleGrid', tag, 'couple');
+}
+
+function selectSingleTab(el, tag) {
+  singleTag = tag;
+  activateTab('singleTabs', el);
+  loadGrid('singleGrid1', tag, 'single');
+}
+
+function selectGiftTab(el, tag) {
+  giftTag = tag;
+  activateTab('giftTabs', el);
+  loadGrid('singleGrid2', tag, 'single');
+}
+
+// ─── MODE TOGGLE ──────────────────────────────────────────────────────────────
+function toggleMode() {
+  if (busy) return;
+  busy = true;
+
+  const next = mode === 'couple' ? 'single' : 'couple';
+  const hc = document.getElementById('heroContent');
+  const pb = document.getElementById('pageBody');
+
+  // Toggle button
+  document.getElementById('modeToggle').classList.toggle('toggled');
+  document.getElementById('toggleLabel').textContent = next === 'single' ? 'Couple Mode' : 'Single Mode';
+
+  // Video crossfade
+  const vc = document.getElementById('vidCouple');
+  const vs = document.getElementById('vidSingle');
+  if (next === 'single') {
+    vc.style.opacity = '0'; vc.style.pointerEvents = 'none';
+    vs.style.opacity = '1'; vs.style.pointerEvents = 'auto';
+    document.getElementById('heroOverlay').className = 'hero-overlay overlay-single';
+  } else {
+    vs.style.opacity = '0'; vs.style.pointerEvents = 'none';
+    vc.style.opacity = '1'; vc.style.pointerEvents = 'auto';
+    document.getElementById('heroOverlay').className = 'hero-overlay overlay-couple';
+  }
+
+  // Hero text swap (fade out → change → fade in)
+  hc.style.opacity = '0';
+  hc.style.transform = 'translateY(16px)';
+  setTimeout(() => {
+    if (next === 'single') {
+      document.getElementById('heroTitle').innerHTML = 'BE YOUR OWN BAE &#11088;';
+      document.getElementById('heroTitle').className = 'hero-title single-title';
+    } else {
+      document.getElementById('heroTitle').innerHTML = "This Valentine's<br/><em>Gift Comfort</em>";
+      document.getElementById('heroTitle').className = 'hero-title couple-title';
+    }
+    hc.style.opacity = '1';
+    hc.style.transform = 'translateY(0)';
+  }, 280);
+
+  // Page theme
+  pb.className = `page-body ${next}-mode`;
+
+  // Show/hide sections
+  document.getElementById('coupleSections').style.display = next === 'couple' ? 'block' : 'none';
+  document.getElementById('singleSections').style.display  = next === 'single' ? 'block' : 'none';
+
+  // Load products for the new mode
+  if (next === 'single') {
+    loadGrid('singleGrid1', singleTag, 'single');
+    loadGrid('singleGrid2', giftTag, 'single');
+  } else {
+    loadGrid('coupleGrid', coupleTag, 'couple');
+  }
+
+  mode = next;
+  setTimeout(() => { busy = false; }, 650);
+}
+
+// ─── CART ─────────────────────────────────────────────────────────────────────
+function addToCart(variantId, name, price, img) {
+  const existing = cart.find(i => i.variantId === variantId);
+  if (existing) existing.qty++;
+  else cart.push({ variantId, name, price, img, qty: 1 });
+  renderCart();
+  openCart();
+  toast(`Added to cart!`);
+}
+
+function changeQty(variantId, delta) {
+  const item = cart.find(i => i.variantId === variantId);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(i => i.variantId !== variantId);
+  renderCart();
+}
+
+function removeItem(variantId) {
+  cart = cart.filter(i => i.variantId !== variantId);
+  renderCart();
+}
+
+function renderCart() {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  const countEl = document.getElementById('cartCount');
+  countEl.textContent = count;
+  countEl.style.display = count > 0 ? 'flex' : 'none';
+  document.getElementById('cartTotal').innerHTML = `&#8377;${Math.round(total).toLocaleString('en-IN')}`;
+  const body = document.getElementById('cartBody');
+  if (!cart.length) {
+    body.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">&#128722;</div><p>Your cart is empty</p></div>`;
+    return;
+  }
+  body.innerHTML = cart.map(i => `
+<div class="cart-item">
+  <div class="ci-img">${i.img ? `<img src="${i.img}" alt="${i.name}"/>` : '&#128474;'}</div>
+  <div class="ci-info">
+    <div class="ci-name">${i.name}</div>
+    <div class="ci-price">&#8377;${Math.round(i.price).toLocaleString('en-IN')}</div>
+    <div class="ci-qty">
+      <button class="qty-btn" onclick="changeQty('${i.variantId}',-1)">&#8722;</button>
+      <span class="qty-num">${i.qty}</span>
+      <button class="qty-btn" onclick="changeQty('${i.variantId}',1)">+</button>
+    </div>
+  </div>
+  <button class="ci-del" onclick="removeItem('${i.variantId}')">&#10005;</button>
+</div>`).join('');
+}
+
+function openCart() {
+  document.getElementById('backdrop').classList.add('open');
+  document.getElementById('cartDrawer').classList.add('open');
+}
+function closeCart() {
+  document.getElementById('backdrop').classList.remove('open');
+  document.getElementById('cartDrawer').classList.remove('open');
+}
+document.getElementById('openCart').onclick = openCart;
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 2800);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.getElementById('heroContent').style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+renderCart();
+loadGrid('coupleGrid', coupleTag, 'couple');
+</script>
+</body>
+</html>
